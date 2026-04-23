@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Job Seeker Prompt Generator - Results{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>✅ Prompts Generated Successfully</h1>
+    <p>Generated {{ results|length }} job application prompt sets on {{ timestamp }}</p>
+</div>
+
+<div style="text-align: center; margin-bottom: 30px;">
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">⬅️ Generate More Prompts</a>
+</div>
+
+{% for result in results %}
+<div class="company-section">
+    <div class="company-header">
+        <h2>{{ result.company }}</h2>
+    </div>
+
+    {% for prompt in result.prompts %}
+    <div class="prompt-card">
+        <h3>{{ prompt.label }}</h3>
+        <div class="instructions">{{ prompt.instructions }}</div>
+
+        <div class="prompt-box" id="prompt-{{ result.company|replace(' ', '_') }}-{{ prompt.id }}">
+            {{ prompt.prompt }}
+        </div>
+
+        <button class="copy-btn" onclick="copyToClipboard(document.getElementById('prompt-{{ result.company|replace(' ', '_') }}-{{ prompt.id }}').textContent)">
+            📋 Copy Prompt
+        </button>
+    </div>
+    {% endfor %}
+</div>
+{% endfor %}
+
+<div class="download-section">
+    <h3 style="margin-bottom: 15px; color: #333;">Download Options</h3>
+    <p style="margin-bottom: 20px; color: #666;">
+        Download individual markdown files or get all prompts in a zip file for offline use.
+    </p>
+
+    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+        {% for result in results %}
+        <a href="{{ url_for('download_single', session_id=session_id, company=result.company) }}" class="btn">
+            📥 Download {{ result.company }} Prompts
+        </a>
+        {% endfor %}
+
+        <a href="{{ url_for('download_all', session_id=session_id) }}" class="btn" style="background: #17a2b8;">
+            📦 Download All (ZIP)
+        </a>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 30px;">
+    <h3 style="margin-bottom: 15px; color: #333;">💡 Pro Tips</h3>
+    <ul style="padding-left: 20px;">
+        <li style="margin-bottom: 8px;"><strong>Run in Order:</strong> Use the prompts sequentially (1→2→3→4) for best results</li>
+        <li style="margin-bottom: 8px;"><strong>Quality Check:</strong> After getting AI responses, use Prompt 5 to evaluate the quality</li>
+        <li style="margin-bottom: 8px;"><strong>Customize:</strong> Feel free to modify prompts based on your specific situation</li>
+        <li><strong>Save Regularly:</strong> Download the markdown files to keep your prompts organized</li>
+    </ul>
+</div>
+{% endblock %}

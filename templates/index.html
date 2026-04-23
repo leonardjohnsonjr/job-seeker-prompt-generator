@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Job Seeker Prompt Generator - Upload Files{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>🎯 Job Seeker Prompt Generator</h1>
+    <p>Transform your job applications with AI-powered prompts</p>
+</div>
+
+<div class="card">
+    <h2 style="margin-bottom: 20px; color: #333;">Upload Your Files</h2>
+
+    <form action="{{ url_for('generate') }}" method="post" enctype="multipart/form-data">
+        <!-- Excel File -->
+        <div class="form-group">
+            <label for="excel_file">📊 Excel File (Required)</label>
+            <input type="file" id="excel_file" name="excel_file" accept=".xlsx,.xls" required>
+            <small style="color: #666; display: block; margin-top: 5px;">
+                Must contain columns: "Company" and "Job_Description"
+            </small>
+        </div>
+
+        <!-- Resume Input Tabs -->
+        <div class="form-group">
+            <label>📄 Resume Content (Required)</label>
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('resume-file')">Upload File</div>
+                <div class="tab" onclick="switchTab('resume-text')">Paste Text</div>
+            </div>
+
+            <div id="resume-file" class="tab-content active">
+                <input type="file" name="resume_file" accept=".txt,.md">
+                <small style="color: #666; display: block; margin-top: 5px;">
+                    Upload your full resume as a .txt or .md file
+                </small>
+            </div>
+
+            <div id="resume-text" class="tab-content">
+                <textarea name="resume_text" placeholder="Paste your full resume text here..."></textarea>
+            </div>
+        </div>
+
+        <!-- Resume Summary Input Tabs -->
+        <div class="form-group">
+            <label>📝 Resume Summary (Required)</label>
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('summary-file')">Upload File</div>
+                <div class="tab" onclick="switchTab('summary-text')">Paste Text</div>
+            </div>
+
+            <div id="summary-file" class="tab-content active">
+                <input type="file" name="summary_file" accept=".txt,.md">
+                <small style="color: #666; display: block; margin-top: 5px;">
+                    Upload your 2-3 sentence professional summary as a .txt or .md file
+                </small>
+            </div>
+
+            <div id="summary-text" class="tab-content">
+                <textarea name="summary_text" placeholder="Paste your 2-3 sentence professional summary here..."></textarea>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div style="text-align: center; margin-top: 30px;">
+            <button type="submit" class="btn">🚀 Generate AI Prompts</button>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <h3 style="margin-bottom: 15px; color: #333;">How It Works</h3>
+    <ol style="padding-left: 20px;">
+        <li style="margin-bottom: 10px;"><strong>Upload Excel:</strong> Your spreadsheet with company names and job descriptions</li>
+        <li style="margin-bottom: 10px;"><strong>Provide Resume:</strong> Either upload your resume file or paste the text directly</li>
+        <li style="margin-bottom: 10px;"><strong>Add Summary:</strong> Your professional summary (2-3 sentences)</li>
+        <li style="margin-bottom: 10px;"><strong>Generate:</strong> Get 5 tailored AI prompts for each job application</li>
+        <li><strong>Use:</strong> Copy prompts and paste into ChatGPT, Claude, or any AI interface</li>
+    </ol>
+</div>
+
+<div class="card">
+    <h3 style="margin-bottom: 15px; color: #333;">Excel Format Requirements</h3>
+    <p style="margin-bottom: 10px;">Your Excel file must have these exact column headers:</p>
+    <ul style="padding-left: 20px;">
+        <li><strong>Company:</strong> The company name for each job application</li>
+        <li><strong>Job_Description:</strong> The full job description text</li>
+    </ul>
+    <p style="margin-top: 10px; color: #666;">
+        <em>Tip: Start your data from row 2 (row 1 should contain the headers)</em>
+    </p>
+</div>
+{% endblock %}
