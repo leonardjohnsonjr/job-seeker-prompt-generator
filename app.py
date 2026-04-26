@@ -198,34 +198,55 @@ def build_prompts(
 
 # ─────────────────────────── EXCEL READER ──────────────────────────────────
 
+def _is_selected_run_value(value) -> bool:
+    """Return True if the Excel Run value should include the row."""
+    if value is None:
+        return False
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return int(value) != 0
+    return str(value).strip().lower() in {"yes", "y", "true", "1", "x", "run", "go"}
+
+
 def read_excel_from_upload(file) -> list:
     """Read Excel data from uploaded file object."""
     try:
         wb = openpyxl.load_workbook(file)
         ws = wb.active
         headers = [str(cell.value).strip() if cell.value else "" for cell in ws[1]]
+        header_map = {h.strip().lower(): i for i, h in enumerate(headers)}
 
-        required = {"Company", "Job_Description"}
-        missing = required - set(headers)
+        required = {"company", "job_description"}
+        missing = required - set(header_map.keys())
         if missing:
             raise ValueError(
                 f"Excel is missing required columns: {missing}\n"
                 f"Found: {headers}"
             )
 
-        col_map = {h: i for i, h in enumerate(headers)}
+        run_col_index = header_map.get("run")
         rows = []
         for row_idx, row in enumerate(ws.iter_rows(min_row=2, values_only=True), start=2):
-            company = row[col_map["Company"]]
+            company = row[header_map["company"]]
             if not company:
                 continue
+
+            if run_col_index is not None and not _is_selected_run_value(row[run_col_index]):
+                continue
+
             rows.append({
                 "row":             row_idx,
                 "company":         str(company).strip(),
-                "job_description": str(row[col_map["Job_Description"]] or "").strip(),
+                "job_description": str(row[header_map["job_description"]] or "").strip(),
             })
 
         if not rows:
+            if run_col_index is not None:
+                raise ValueError(
+                    "No rows marked to run in the Excel file. "
+                    "Use the optional 'Run' column with 'yes', '1', or 'x' for rows you want to process."
+                )
             raise ValueError("No data rows found in the Excel file.")
         return rows
     except Exception as e:

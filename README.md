@@ -42,12 +42,17 @@ https://leonardjohnsonjr.pythonanywhere.com/
 Your Excel file must have these exact column headers:
 - **Company**: The company name
 - **Job_Description**: The full job description text
+- **Run** (optional): If present, only rows with a truthy value in this column will be processed.
+
+Accepted truthy values for the optional **Run** column include: `yes`, `y`, `true`, `1`, `x`, `run`, or `go`.
 
 Example:
-| Company | Job_Description |
-|---------|----------------|
-| Google | We are looking for a software engineer... |
-| Microsoft | Join our team as a product manager... |
+| Company | Job_Description | Run |
+|---------|----------------|-----|
+| Google | We are looking for a software engineer... | yes |
+| Microsoft | Join our team as a product manager... | no |
+
+If the **Run** column is omitted, all rows are processed.
 
 **Try it out:** Use the included `sample_jobs.xlsx` file to test!
 
